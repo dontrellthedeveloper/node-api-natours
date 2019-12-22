@@ -183,33 +183,32 @@ const deleteUser = (req, res) => {
 /* =============================================
 |  |  |  |  |  Routes
 ================================================ */
-// app.get('/api/v1/tours', getAllTours);
-// app.get('/api/v1/tours/:id', getTour);
-// app.post('/api/v1/tours', createTour);
-// app.patch('/api/v1/tours/:id', updateTour);
-// app.delete('/api/v1/tours/:id', deleteTour );
-
-app
-    .route('/api/v1/tours')
+const tourRouter = express.Router();
+const userRouter = express.Router();
+tourRouter
+    .route('/')
     .get(getAllTours)
     .post(createTour);
 
-app
-    .route('/api/v1/tours/:id')
+tourRouter
+    .route('/:id')
     .get(getTour)
     .patch(updateTour)
     .delete(deleteTour);
 
-app
-    .route('/api/v1/users')
+userRouter
+    .route('/')
     .get(getAllUsers)
     .post(createUser);
 
-app
-    .route('/api/v1/users/:id')
+userRouter
+    .route('/:id')
     .get(getUser)
     .post(updateUser)
     .delete(deleteUser);
+
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
 
 /* =============================================
 |  |  |  |  |  Express Server
