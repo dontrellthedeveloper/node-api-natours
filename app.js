@@ -1,23 +1,26 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');
 
-
-
-
+const app = express();
 
 
 /* =============================================
-|  |  |  |  |  Express Server
+|  |  |  |  |  Middleware
 ================================================ */
-
-const app = express();
+app.use(morgan('dev'));
 app.use(express.json());
 
-const port = 9000;
-app.listen(port, () => {
-    console.log(`App running on port ${port}...`)
+
+app.use((req, res, next) => {
+    console.log('Hello from the middleware');
+    next();
 });
 
+app.use((req, res, next) => {
+    req.requestTime = new Date().toISOString();
+    next();
+});
 
 /* =============================================
 |  |  |  |  |  Synchronous Code
@@ -29,25 +32,20 @@ const tours = JSON.parse(
 
 
 
-///////////////////////////////////////////////////////////////
-///////////////////////// Requests ////////////////////////////
-///////////////////////////////////////////////////////////////
-
-
 /* =============================================
 |  |  |  |  |  GET request
 ================================================ */
 const getAllTours = (req, res) => {
+    console.log(req.requestTime);
     res.status(200).json({
         status: 'success',
+        requestedAt: req.requestTime,
         results: tours.length,
         data: {
             tours
         }
     })
 };
-
-
 
 /* =============================================
 |  |  |  |  |  GET 'One' request (URL param)
@@ -63,7 +61,6 @@ const getTour = (req, res) => {
             message: 'Invalid ID'
         });
     }
-
     res.status(200).json({
         status: 'success',
         data: {
@@ -71,8 +68,6 @@ const getTour = (req, res) => {
         }
     });
 };
-
-
 
 /* =============================================
 |  |  |  |  |  POST request
@@ -94,8 +89,6 @@ const createTour = (req, res) => {
     });
 };
 
-
-
 /* =============================================
 |  |  |  |  |  PATCH request
 ================================================ */
@@ -106,7 +99,6 @@ const updateTour = (req, res) => {
             message: 'Invalid ID'
         });
     }
-
     res.status(200).json({
         status: 'success',
         data: {
@@ -114,8 +106,6 @@ const updateTour = (req, res) => {
         }
     })
 };
-
-
 
 /* =============================================
 |  |  |  |  |  DELETE request
@@ -127,13 +117,11 @@ const deleteTour = (req, res) => {
             message: 'Invalid ID'
         });
     }
-
     res.status(204).json({
         status: 'success',
         data: null
     })
 };
-
 
 /* =============================================
 |  |  |  |  |  Routes
@@ -156,3 +144,10 @@ app
     .delete(deleteTour);
 
 
+/* =============================================
+|  |  |  |  |  Express Server
+================================================ */
+const port = 9000;
+app.listen(port, () => {
+    console.log(`App running on port ${port}...`)
+});
