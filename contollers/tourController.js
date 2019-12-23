@@ -1,21 +1,5 @@
 const Tour = require('./../models/tourModel');
 
-// /* =============== Synchronous Code =============== */
-// const tours = JSON.parse(
-//     fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
-// );
-
-/* ================= Middleware =================== */
-
-exports.checkBody = (req, res, next) => {
-    if (!req.body.name || !req.body.price) {
-        return res.status(400).json({
-            status: 'fail',
-            message: 'Missing name or price'
-        })
-    }
-    next();
-};
 
 /////////////////// Tour Requests ////////////////////
 
@@ -50,13 +34,23 @@ exports.getTour = (req, res) => {
 
 /* ================= Create Tour ================== */
 
-exports.createTour = (req, res) => {
-    res.status(201).json({
-        status: 'success',
-        // data: {
-        //     tours: newTour
-        // }
-    });
+exports.createTour = async (req, res) => {
+
+    try {
+        const newTour = await Tour.create(req.body);
+
+        res.status(201).json({
+            status: 'success',
+            data: {
+                tours: newTour
+            }
+        });
+    } catch (err) {
+        res.status(400).json({
+            status: 'fail',
+            message: err
+        })
+    }
 };
 
 /* ================= Update Tour ================== */
