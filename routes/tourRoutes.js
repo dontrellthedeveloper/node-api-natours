@@ -4,7 +4,7 @@ const router = express.Router();
 
 /* ============== Tour Router ==================== */
 
-router.param('id', tourController.checkID);
+// router.param('id', tourController.checkID);
 
 router
     .route('/')
