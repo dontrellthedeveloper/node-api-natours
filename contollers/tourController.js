@@ -31,6 +31,14 @@ exports.getAllTours = async (req, res) => {
             query.sort('-createdAt');
         }
 
+        // 3) Field limiting
+        if(req.query.fields) {
+            const fields = req.query.fields.split(',').join(' ');
+            query = query.select(fields)
+            // sort('price ratingsAverage')
+        } else {
+            query = query.select('-__v')
+        }
 
         // Execute Query
         const tours = await query;
